@@ -56,7 +56,7 @@ class ExampleServiceAdmin(ReadOnlyAwareAdmin):
         'administration'),
         )
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return ExampleService.get_service_objects_by_user(request.user)
 
 admin.site.register(ExampleService, ExampleServiceAdmin)
@@ -111,7 +111,7 @@ class ExampleTenantAdmin(ReadOnlyAwareAdmin):
 
     suit_form_tabs = (('general', 'Details'),)
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return ExampleTenant.get_tenant_objects_by_user(request.user)
 
 admin.site.register(ExampleTenant, ExampleTenantAdmin)

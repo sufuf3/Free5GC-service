@@ -16,7 +16,7 @@ topology_template:
           models: models.py
           admin: admin.py
           synchronizer: synchronizer/manifest
-	  synchronizer_run: exampleservice-synchronizer.py
+          synchronizer_run: exampleservice-synchronizer.py
           tosca_custom_types: exampleservice.yaml
           tosca_resource: tosca/resources/exampleservice.py, tosca/resources/exampletenant.py
           rest_service: api/service/exampleservice.py

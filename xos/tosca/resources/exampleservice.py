@@ -1,15 +1,6 @@
-import os
-import pdb
-import sys
-import tempfile
-sys.path.append("/opt/tosca")
-from translator.toscalib.tosca_template import ToscaTemplate
-import pdb
-
-from core.models import Service,User,CoarseTenant
-from services.exampleservice.models import ExampleService
-
 from xosresource import XOSResource
+from core.models import Service, User, CoarseTenant
+from services.exampleservice.models import ExampleService
 
 class XOSExampleService(XOSResource):
     provides = "tosca.nodes.ExampleService"

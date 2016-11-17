@@ -1,6 +1,7 @@
 import os
 import sys
 from django.db.models import Q, F
+from core.models import ModelLink, CoarseTenant
 from services.exampleservice.models import ExampleService, ExampleTenant
 from synchronizers.base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
 
@@ -18,6 +19,8 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
     template_name = "exampletenant_playbook.yaml"
 
     service_key_name = "/opt/xos/synchronizers/exampleservice/exampleservice_private_key"
+
+    watches = [ModelLink(CoarseTenant,via='coarsetenant')]
 
     def __init__(self, *args, **kwargs):
         super(SyncExampleTenant, self).__init__(*args, **kwargs)

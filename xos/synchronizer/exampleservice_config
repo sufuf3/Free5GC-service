@@ -21,4 +21,5 @@ pretend=False
 backoff_disabled=True
 save_ansible_output=True
 proxy_ssh=False
+enable_watchers=True
 

@@ -56,3 +56,8 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
         fields['service_message'] = exampleservice.service_message
         return fields
 
+    def delete_record(self, port):
+        # Nothing needs to be done to delete an exampleservice; it goes away
+        # when the instance holding the exampleservice is deleted.
+        pass
+

@@ -39,30 +39,30 @@ def parse_status_page():
     while line:
         line = line.strip()
         if "Total Accesses:" in line:
-            key = "total.accesses"
+            key = "exampleservice.apache.total.accesses"
             val  = {'val':int(line.strip("Total Accesses:")), 'unit':'accesses', 'metric_type':'gauge'}
         elif "Total kBytes:" in line:
-            key = "total.kBytes"
+            key = "exampleservice.apache.total.kBytes"
             val  = {'val':float(line.strip("Total kBytes:")), 'unit':'kBytes', 'metric_type':'gauge'}
         elif "Uptime:" in line:
-            key = "uptime"
+            key = "exampleservice.apache.uptime"
             val  = {'val':int(line.strip("Uptime:")), 'unit':'seconds', 'metric_type':'gauge'}
         elif "ReqPerSec:" in line:
-            key = "reqpersec"
+            key = "exampleservice.apache.reqpersec"
             val  = {'val':float(line.strip("ReqPerSec:")), 'unit':'rate', 'metric_type':'gauge'}
         elif "BytesPerSec:" in line:
-            key = "bytespersec"
+            key = "exampleservice.apache.bytespersec"
             val  = {'val':float(line.strip("BytesPerSec:")), 'unit':'rate', 'metric_type':'gauge'}
         elif "BytesPerReq:" in line:
-            key = "bytesperreq"
+            key = "exampleservice.apache.bytesperreq"
             val  = {'val':float(line.strip("BytesPerReq:")), 'unit':'rate', 'metric_type':'gauge'}
         elif "BusyWorkers:" in line:
-            key = "busyworkers"
+            key = "exampleservice.apache.busyworkers"
             val  = {'val':int(line.strip("BusyWorkers:")), 'unit':'workers', 'metric_type':'gauge'}
         elif "IdleWorkers:" in line:
-            key = "idleworkers"
+            key = "exampleservice.apache.idleworkers"
             val  = {'val':int(line.strip("IdleWorkers:")), 'unit':'workers', 'metric_type':'gauge'}
-   
+
         dictStatus[key] = val
         counter = counter + 1
         line = file.readline()

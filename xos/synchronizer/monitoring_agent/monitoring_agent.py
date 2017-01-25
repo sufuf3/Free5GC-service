@@ -28,6 +28,7 @@ publisher_id='exampleservice_publisher'
 @app.route('/monitoring/agent/exampleservice/start',methods=['POST'])
 def exampleservice_start_monitoring_agent():
     global start_publish, rabbit_user, rabbit_password, rabbit_host, rabbit_exchange
+    global keystone_tenant_id, keystone_user_id, publisher_id
     try:
         # To do validation of user inputs for all the functions
         target = request.json['target']
@@ -83,10 +84,10 @@ def publish_exampleservice_stats(example_stats):
                  'publisher_id': publisher_id,
                  'timestamp':datetime.datetime.now().isoformat(),
                  'priority':'INFO',
-                 'payload': {'name':k,
-                             'unit':v['unit'],
-                             'result':v['val'],
-                             'type':v['metric_type'],
+                 'payload': {'counter_name':k,
+                             'counter_unit':v['unit'],
+                             'counter_volume':v['val'],
+                             'counter_type':v['metric_type'],
                              'resource_id':'exampleservice',
                              'user_id':keystone_user_id,
                              'tenant_id':keystone_tenant_id
@@ -103,7 +104,7 @@ def periodic_publish():
     resParse = stats.parse_status_page()
     logging.debug ("publish:%(data)s" % {'data':resParse})
     publish_exampleservice_stats(resParse)
-    threading.Timer(5, periodic_publish).start()
+    threading.Timer(60, periodic_publish).start()
 
 if __name__ == "__main__":
     logging.config.fileConfig('monitoring_agent.conf', disable_existing_loggers=False)

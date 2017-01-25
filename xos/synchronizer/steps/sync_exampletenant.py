@@ -1,12 +1,15 @@
 import os
 import sys
 from django.db.models import Q, F
-from core.models import ModelLink, CoarseTenant
+from core.models import ModelLink, CoarseTenant, ServiceMonitoringAgentInfo
 from services.exampleservice.models import ExampleService, ExampleTenant
 from synchronizers.base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
+from xos.logger import Logger, logging
 
 parentdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, parentdir)
+
+logger = Logger(level=logging.INFO)
 
 class SyncExampleTenant(SyncInstanceUsingAnsible):
 
@@ -20,7 +23,7 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
 
     service_key_name = "/opt/xos/synchronizers/exampleservice/exampleservice_private_key"
 
-    watches = [ModelLink(CoarseTenant,via='coarsetenant')]
+    watches = [ModelLink(CoarseTenant,via='coarsetenant'), ModelLink(ServiceMonitoringAgentInfo,via='monitoringagentinfo')]
 
     def __init__(self, *args, **kwargs):
         super(SyncExampleTenant, self).__init__(*args, **kwargs)
@@ -61,3 +64,33 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
         # when the instance holding the exampleservice is deleted.
         pass
 
+    def handle_service_monitoringagentinfo_watch_notification(self, monitoring_agent_info):
+        if not monitoring_agent_info.service:
+            logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
+            return
+
+        if not monitoring_agent_info.target_uri:
+            logger.info("handle watch notifications for service monitoring agent info...ignoring because target_uri attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
+            return
+
+        objs = ExampleTenant.get_tenant_objects().all()
+        for obj in objs:
+            if obj.provider_service.id != monitoring_agent_info.service.id:
+                logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is not matching" % (monitoring_agent_info))
+                return
+
+            instance = self.get_instance(obj)
+            if not instance:
+               logger.warn("handle watch notifications for service monitoring agent info...: No valid instance found for object %s" % (str(obj)))
+               return
+
+            logger.info("handling watch notification for monitoring agent info:%s for ExampleTenant object:%s" % (monitoring_agent_info, obj))
+
+            #Run ansible playbook to update the routing table entries in the instance
+            fields = self.get_ansible_fields(instance)
+            fields["ansible_tag"] =  obj.__class__.__name__ + "_" + str(obj.id) + "_monitoring"
+            fields["target_uri"] = monitoring_agent_info.target_uri
+
+            template_name = "monitoring_agent.yaml"
+            super(SyncExampleTenant, self).run_playbook(obj, fields, template_name)
+        pass

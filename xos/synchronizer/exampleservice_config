@@ -20,6 +20,8 @@ logfile=/var/log/xos_backend.log
 pretend=False
 backoff_disabled=True
 save_ansible_output=True
-proxy_ssh=False
+proxy_ssh=True
+proxy_ssh_key=/opt/cord_profile/node_key
+proxy_ssh_user=root
 enable_watchers=True
 

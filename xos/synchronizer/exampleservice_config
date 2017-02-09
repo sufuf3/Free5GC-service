@@ -3,7 +3,7 @@
 name=xos
 user=postgres
 password=password
-host=localhost
+host=xos_db
 port=5432
 
 # Required by XOS

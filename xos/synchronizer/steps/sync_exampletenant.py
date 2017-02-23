@@ -1,9 +1,7 @@
 import os
 import sys
-from django.db.models import Q, F
-from core.models import ModelLink, CoarseTenant, ServiceMonitoringAgentInfo
-from services.exampleservice.models import ExampleService, ExampleTenant
-from synchronizers.base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
+from synchronizers.new_base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
+from synchronizers.new_base.modelaccessor import *
 from xos.logger import Logger, logging
 
 parentdir = os.path.join(os.path.dirname(__file__), "..")
@@ -28,22 +26,11 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
     def __init__(self, *args, **kwargs):
         super(SyncExampleTenant, self).__init__(*args, **kwargs)
 
-    def fetch_pending(self, deleted):
-
-        if (not deleted):
-            objs = ExampleTenant.get_tenant_objects().filter(
-                Q(enacted__lt=F('updated')) | Q(enacted=None), Q(lazy_blocked=False))
-        else:
-            # If this is a deletion we get all of the deleted tenants..
-            objs = ExampleTenant.get_deleted_tenant_objects()
-
-        return objs
-
     def get_exampleservice(self, o):
         if not o.provider_service:
             return None
 
-        exampleservice = ExampleService.get_service_objects().filter(id=o.provider_service.id)
+        exampleservice = ExampleService.objects.filter(id=o.provider_service.id)
 
         if not exampleservice:
             return None
@@ -73,7 +60,7 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
             logger.info("handle watch notifications for service monitoring agent info...ignoring because target_uri attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
             return
 
-        objs = ExampleTenant.get_tenant_objects().all()
+        objs = ExampleTenant.objects.all()
         for obj in objs:
             if obj.provider_service.id != monitoring_agent_info.service.id:
                 logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is not matching" % (monitoring_agent_info))

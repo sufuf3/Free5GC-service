@@ -1,0 +1,9 @@
+FROM xosproject/xos-synchronizer-base
+
+ADD . /opt/xos/synchronizers/exampleservice
+
+ENTRYPOINT []
+
+WORKDIR "/opt/xos/synchronizers/exampleservice"
+
+CMD bash -c "cd /opt/xos/synchronizers/exampleservice; ./run-from-api.sh"

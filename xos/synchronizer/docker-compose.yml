@@ -16,7 +16,7 @@ services:
         - /opt/cord_profile/node_key:/opt/cord_profile/node_key:ro
         - /opt/cord/build/platform-install/credentials/xosadmin@opencord.org:/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org
     external_links: 
-        - rcord_xos_redis_1:redis
+        - rcordbs_xos_redis_1:redis
     logging:
       driver: "json-file"
       options:

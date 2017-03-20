@@ -21,7 +21,7 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
 
     service_key_name = "/opt/xos/synchronizers/exampleservice/exampleservice_private_key"
 
-    watches = [ModelLink(CoarseTenant,via='coarsetenant'), ModelLink(ServiceMonitoringAgentInfo,via='monitoringagentinfo')]
+    watches = [ModelLink(ServiceDependency,via='servicedependency'), ModelLink(ServiceMonitoringAgentInfo,via='monitoringagentinfo')]
 
     def __init__(self, *args, **kwargs):
         super(SyncExampleTenant, self).__init__(*args, **kwargs)

@@ -16,4 +16,4 @@ proxy_ssh_user=root
 enable_watchers=True
 accessor_kind=api
 accessor_password=@/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org
-required_models=ExampleService, ExampleTenant, CoarseTenant, ServiceMonitoringAgentInfo
+required_models=ExampleService, ExampleTenant, ServiceDependency, ServiceMonitoringAgentInfo

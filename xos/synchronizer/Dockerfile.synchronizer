@@ -1,4 +1,4 @@
-FROM xosproject/xos-synchronizer-base
+FROM xosproject/xos-synchronizer-base:candidate
 
 ADD . /opt/xos/synchronizers/exampleservice
 

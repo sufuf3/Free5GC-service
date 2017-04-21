@@ -1,0 +1,13 @@
+option name = "exampleservice";
+option verbose_name = "Example Service";
+
+message ExampleService (Service){
+    required string service_message = 1 [help_text = "Service Message to Display", max_length = 254, null = False, db_index = False, blank = False];
+}
+
+
+message ExampleTenant (TenantWithContainer){
+     option name = "exampletenant";
+     option verbose_name = "Example Tenant";
+     required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
+}

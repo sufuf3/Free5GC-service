@@ -1,47 +1,72 @@
-# models.py -  ExampleService Models
+from header import *
 
-from core.models import Service, TenantWithContainer
-from django.db import models, transaction
 
-SERVICE_NAME = 'exampleservice'
-SERVICE_NAME_VERBOSE = 'Example Service'
-SERVICE_NAME_VERBOSE_PLURAL = 'Example Services'
-TENANT_NAME_VERBOSE = 'Example Tenant'
-TENANT_NAME_VERBOSE_PLURAL = 'Example Tenants'
+
+#from core.models.service import Service
+from core.models import Service
+
+
+
+#from core.models.tenantwithcontainer import TenantWithContainer
+from core.models import TenantWithContainer
+
+
+
+
 
 class ExampleService(Service):
 
-    KIND = SERVICE_NAME
+  KIND = "exampleservice"
 
-    class Meta:
-        app_label = SERVICE_NAME
-        verbose_name = SERVICE_NAME_VERBOSE
+  class Meta:
+      app_label = "exampleservice"
+      name = "exampleservice"
+      verbose_name = "Example Service"
 
-    service_message = models.CharField(max_length=254, help_text="Service Message to Display")
+  # Primitive Fields (Not Relations)
+  service_message = CharField( help_text = "Service Message to Display", max_length = 254, null = False, db_index = False, blank = False )
+  
+
+  # Relations
+  
+
+  
+  pass
+
+
+
 
 class ExampleTenant(TenantWithContainer):
 
-    KIND = SERVICE_NAME
+  KIND = "exampleservice"
 
-    class Meta:
-        verbose_name = TENANT_NAME_VERBOSE
+  class Meta:
+      app_label = "exampleservice"
+      name = "exampletenant"
+      verbose_name = "Example Tenant"
 
-    tenant_message = models.CharField(max_length=254, help_text="Tenant Message to Display")
+  # Primitive Fields (Not Relations)
+  tenant_message = CharField( help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False )
+  
 
-    def __init__(self, *args, **kwargs):
-        exampleservice = ExampleService.get_service_objects().all()
-        if exampleservice:
-            self._meta.get_field('provider_service').default = exampleservice[0].id
-        super(ExampleTenant, self).__init__(*args, **kwargs)
+  # Relations
+  
 
-    def save(self, *args, **kwargs):
-        super(ExampleTenant, self).save(*args, **kwargs)
-        model_policy_exampletenant(self.pk)
-
-    def delete(self, *args, **kwargs):
-        self.cleanup_container()
-        super(ExampleTenant, self).delete(*args, **kwargs)
-
+  def __init__(self, *args, **kwargs):
+      exampleservice = ExampleService.get_service_objects().all()
+      if exampleservice:
+          self._meta.get_field('provider_service').default = exampleservice[0].id
+      super(ExampleTenant, self).__init__(*args, **kwargs)
+  
+  def save(self, *args, **kwargs):
+      super(ExampleTenant, self).save(*args, **kwargs)
+      model_policy_exampletenant(self.pk)
+  
+  def delete(self, *args, **kwargs):
+      self.cleanup_container()
+      super(ExampleTenant, self).delete(*args, **kwargs)
+  
+  pass
 
 def model_policy_exampletenant(pk):
     with transaction.atomic():
@@ -50,4 +75,5 @@ def model_policy_exampletenant(pk):
             return
         tenant = tenant[0]
         tenant.manage_container()
+
 

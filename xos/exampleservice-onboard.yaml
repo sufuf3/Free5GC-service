@@ -13,7 +13,7 @@ topology_template:
           base_url: file:///opt/xos_services/exampleservice/xos/
           # The following will concatenate with base_url automatically, if
           # base_url is non-null.
-          models: models.py
+          xproto: ./
           admin: admin.py
           synchronizer: synchronizer/manifest
           synchronizer_run: exampleservice-synchronizer.py

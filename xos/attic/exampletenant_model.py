@@ -1,5 +1,5 @@
 def __init__(self, *args, **kwargs):
-    exampleservice = ExampleService.get_service_objects().all()
+    exampleservice = ExampleService.objects.all()
     if exampleservice:
         self._meta.get_field('provider_service').default = exampleservice[0].id
     super(ExampleTenant, self).__init__(*args, **kwargs)

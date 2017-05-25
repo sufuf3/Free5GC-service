@@ -20,7 +20,7 @@ class XOSExampleTenant(XOSResource):
 
     def get_existing_objs(self):
         args = self.get_xos_args(throw_exception=False)
-        return ExampleTenant.get_tenant_objects().filter(provider_service=args["provider_service"], service_specific_id=args["service_specific_id"])
+        return ExampleTenant.objects.filter(provider_service=args["provider_service"], service_specific_id=args["service_specific_id"])
         return []
 
     def can_delete(self, obj):

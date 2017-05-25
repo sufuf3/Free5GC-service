@@ -12,14 +12,14 @@ from api.xosapi_helpers import PlusModelSerializer, XOSViewSet, ReadOnlyField
 from services.exampleservice.models import ExampleTenant, ExampleService
 
 def get_default_example_service():
-    example_services = ExampleService.get_service_objects().all()
+    example_services = ExampleService.objects.all()
     if example_services:
         return example_services[0]
     return None
 
 class ExampleTenantSerializer(PlusModelSerializer):
         id = ReadOnlyField()
-        provider_service = serializers.PrimaryKeyRelatedField(queryset=ExampleService.get_service_objects().all(), default=get_default_example_service)
+        provider_service = serializers.PrimaryKeyRelatedField(queryset=ExampleService.objects.all(), default=get_default_example_service)
         tenant_message = serializers.CharField(required=False)
         backend_status = ReadOnlyField()
 
@@ -36,7 +36,7 @@ class ExampleTenantViewSet(XOSViewSet):
     base_name = "exampletenant"
     method_name = "exampletenant"
     method_kind = "viewset"
-    queryset = ExampleTenant.get_tenant_objects().all()
+    queryset = ExampleTenant.objects.all()
     serializer_class = ExampleTenantSerializer
 
     @classmethod

@@ -36,7 +36,7 @@ class ExampleServiceViewSet(XOSViewSet):
     base_name = "exampleservice"
     method_name = "exampleservice"
     method_kind = "viewset"
-    queryset = ExampleService.get_service_objects().all()
+    queryset = ExampleService.objects.all()
     serializer_class = ExampleServiceSerializer
 
     @classmethod

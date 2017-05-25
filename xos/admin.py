@@ -57,7 +57,7 @@ class ExampleServiceAdmin(ReadOnlyAwareAdmin):
         )
 
     def get_queryset(self, request):
-        return ExampleService.get_service_objects_by_user(request.user)
+        return ExampleService.select_by_user(request.user)
 
 admin.site.register(ExampleService, ExampleServiceAdmin)
 
@@ -75,7 +75,7 @@ class ExampleTenantForm(forms.ModelForm):
         self.fields['kind'].widget.attrs['readonly'] = True
         self.fields['kind'].initial = SERVICE_NAME
 
-        self.fields['provider_service'].queryset = ExampleService.get_service_objects().all()
+        self.fields['provider_service'].queryset = ExampleService.objects.all()
 
         if self.instance:
             self.fields['creator'].initial = self.instance.creator
@@ -83,8 +83,8 @@ class ExampleTenantForm(forms.ModelForm):
 
         if (not self.instance) or (not self.instance.pk):
             self.fields['creator'].initial = get_request().user
-            if ExampleService.get_service_objects().exists():
-                self.fields['provider_service'].initial = ExampleService.get_service_objects().all()[0]
+            if ExampleService.objects.exists():
+                self.fields['provider_service'].initial = ExampleService.objects.all()[0]
 
     def save(self, commit=True):
         self.instance.creator = self.cleaned_data.get('creator')
@@ -112,7 +112,7 @@ class ExampleTenantAdmin(ReadOnlyAwareAdmin):
     suit_form_tabs = (('general', 'Details'),)
 
     def get_queryset(self, request):
-        return ExampleTenant.get_tenant_objects_by_user(request.user)
+        return ExampleTenant.select_by_user(request.user)
 
 admin.site.register(ExampleTenant, ExampleTenantAdmin)
 

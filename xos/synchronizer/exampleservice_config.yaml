@@ -1,0 +1,12 @@
+name: exampleservice-synchronizer
+accessor:
+  username: xosadmin@opencord.org
+  password: "@/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org"
+required_models:
+  - ExampleService
+  - ExampleTenant
+  - ServiceDependency
+  - ServiceMonitoringAgentInfo
+dependency_graph: "/opt/xos/synchronizers/exampleservice/model-deps"
+steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
+sys_dir: "/opt/xos/synchronizers/exampleservice/sys"

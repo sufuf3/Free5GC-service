@@ -27,10 +27,10 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
         super(SyncExampleTenant, self).__init__(*args, **kwargs)
 
     def get_exampleservice(self, o):
-        if not o.provider_service:
+        if not o.owner:
             return None
 
-        exampleservice = ExampleService.objects.filter(id=o.provider_service.id)
+        exampleservice = ExampleService.objects.filter(id=o.owner.id)
 
         if not exampleservice:
             return None
@@ -62,7 +62,7 @@ class SyncExampleTenant(SyncInstanceUsingAnsible):
 
         objs = ExampleTenant.objects.all()
         for obj in objs:
-            if obj.provider_service.id != monitoring_agent_info.service.id:
+            if obj.owner.id != monitoring_agent_info.service.id:
                 logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is not matching" % (monitoring_agent_info))
                 return
 

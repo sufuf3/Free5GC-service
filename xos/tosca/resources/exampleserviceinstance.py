@@ -1,4 +1,3 @@
-
 # Copyright 2017-present Open Networking Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,21 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from xosresource import XOSResource
 from core.models import Service
-from services.exampleservice.models import ExampleTenant, SERVICE_NAME as EXAMPLETENANT_KIND
+from services.exampleservice.models import ExampleServiceInstance
 
-class XOSExampleTenant(XOSResource):
-    provides = "tosca.nodes.ExampleTenant"
-    xos_model = ExampleTenant
+class XOSExampleServiceInstance(XOSResource):
+    provides = ["tosca.nodes.ExampleServiceInstance",
+                "tosca.nodes.ExampleTenant"            # deprecated
+                ]
+    xos_model = ExampleServiceInstance
     name_field = "service_specific_id"
     copyin_props = ("tenant_message",)
 
     def get_xos_args(self, throw_exception=True):
-        args = super(XOSExampleTenant, self).get_xos_args()
+        args = super(XOSExampleServiceInstance, self).get_xos_args()
 
-        # ExampleTenant must always have a provider_service
+        # ExampleServiceInstance must always have a provider_service
         provider_name = self.get_requirement("tosca.relationships.TenantOfService", throw_exception=True)
         if provider_name:
             args["owner"] = self.get_xos_object(Service, throw_exception=True, name=provider_name)
@@ -36,9 +36,9 @@ class XOSExampleTenant(XOSResource):
 
     def get_existing_objs(self):
         args = self.get_xos_args(throw_exception=False)
-        return ExampleTenant.objects.filter(owner=args["owner"], service_specific_id=args["service_specific_id"])
+        return ExampleServiceInstance.objects.filter(owner=args["owner"], service_specific_id=args["service_specific_id"])
         return []
 
     def can_delete(self, obj):
-        return super(XOSExampleTenant, self).can_delete(obj)
+        return super(XOSExampleServiceInstance, self).can_delete(obj)
 

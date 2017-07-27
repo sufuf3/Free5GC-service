@@ -98,6 +98,24 @@ node_types:
                 type: string
                 required: false
 
+    tosca.nodes.ExampleServiceInstance:
+        derived_from: tosca.nodes.Root
+        description: >
+            A ServiceInstance of the example service
+        properties:
+            kind:
+                type: string
+                default: generic
+                description: Kind of tenant
+            service_specific_id:
+                type: string
+                required: false
+                description: Service specific ID opaque to XOS but meaningful to service
+            tenant_message:
+                type: string
+                required: false
+
+    # deprecated, replaced by ExampleServiceInstance
     tosca.nodes.ExampleTenant:
         derived_from: tosca.nodes.Root
         description: >

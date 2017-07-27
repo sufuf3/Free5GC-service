@@ -6,8 +6,8 @@ message ExampleService (Service){
 }
 
 
-message ExampleTenant (TenantWithContainer){
-     option name = "exampletenant";
-     option verbose_name = "Example Tenant";
+message ExampleServiceInstance (TenantWithContainer){
+     option name = "exampleserviceinstance";
+     option verbose_name = "Example Service Instance";
      required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
 }

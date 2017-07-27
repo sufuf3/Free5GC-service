@@ -35,6 +35,17 @@ node_types:
                 type: string
                 required: false
 
+    tosca.nodes.ExampleServiceInstance:
+        derived_from: tosca.nodes.Root
+        description: >
+            A ServiceInstance of the example service
+        properties:
+            xos_base_tenant_props
+            tenant_message:
+                type: string
+                required: false
+
+    # deprecated, replaced by ExampleServiceInstance
     tosca.nodes.ExampleTenant:
         derived_from: tosca.nodes.Root
         description: >

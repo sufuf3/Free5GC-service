@@ -15,7 +15,7 @@
 
 
 ---
-# exampletenant_playbook
+# exampleserviceinstance_playbook
 
 - hosts: "{{ instance_name }}"
   connection: ssh

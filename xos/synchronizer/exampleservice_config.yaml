@@ -20,7 +20,7 @@ accessor:
   password: "@/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org"
 required_models:
   - ExampleService
-  - ExampleTenant
+  - ExampleServiceInstance
   - ServiceDependency
   - ServiceMonitoringAgentInfo
 dependency_graph: "/opt/xos/synchronizers/exampleservice/model-deps"

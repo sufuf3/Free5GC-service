@@ -1,4 +1,5 @@
 option name = "exampleservice";
+option app_label = "exampleservice";
 option verbose_name = "Example Service";
 
 message ExampleService (Service){

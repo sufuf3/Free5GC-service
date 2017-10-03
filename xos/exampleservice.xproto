@@ -1,14 +1,13 @@
-option name = "exampleservice";
 option app_label = "exampleservice";
-option verbose_name = "Example Service";
+option name = "exampleservice";
 
 message ExampleService (Service){
+    option verbose_name = "Example Service";
     required string service_message = 1 [help_text = "Service Message to Display", max_length = 254, null = False, db_index = False, blank = False];
 }
 
 
 message ExampleServiceInstance (TenantWithContainer){
-     option name = "exampleserviceinstance";
      option verbose_name = "Example Service Instance";
      required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
 }

@@ -60,6 +60,19 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
         fields['tenant_message'] = o.tenant_message
         exampleservice = self.get_exampleservice(o)
         fields['service_message'] = exampleservice.service_message
+
+        if o.foreground_color:
+            fields["foreground_color"] = o.foreground_color.html_code
+
+        if o.background_color:
+            fields["background_color"] = o.background_color.html_code
+
+        images=[]
+        for image in o.embedded_images.all():
+            images.append({"name": image.name,
+                           "url": image.url})
+        fields["images"] = images
+
         return fields
 
     def delete_record(self, port):

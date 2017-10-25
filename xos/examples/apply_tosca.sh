@@ -1,3 +1,4 @@
+#! /bin/bash
 
 # Copyright 2017-present Open Networking Foundation
 #
@@ -13,15 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# models.py -  ExampleService Models
-
-from core.models import Service, TenantWithContainer, XOSBase
-from django.db import transaction
-from django.db.models import *
-
-SERVICE_NAME = 'exampleservice'
-SERVICE_NAME_VERBOSE = 'Example Service'
-SERVICE_NAME_VERBOSE_PLURAL = 'Example Services'
-SERVICE_INSTANCE_NAME_VERBOSE = 'Example Service Instance'
-SERVICE_INSTANCE_VERBOSE_PLURAL = 'Example Service Instances'
+PASSWORD=`cat /opt/credentials/xosadmin@opencord.org`
+curl -H "xos-username: xosadmin@opencord.org" -H "xos-password: $PASSWORD" -X POST --data-binary @exampleservice.yaml 127.0.0.1:9102/run

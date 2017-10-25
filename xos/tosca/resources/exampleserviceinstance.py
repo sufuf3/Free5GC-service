@@ -21,7 +21,6 @@ class XOSExampleServiceInstance(XOSResource):
                 "tosca.nodes.ExampleTenant"            # deprecated
                 ]
     xos_model = ExampleServiceInstance
-    name_field = "service_specific_id"
     copyin_props = ("tenant_message",)
 
     def get_xos_args(self, throw_exception=True):
@@ -33,11 +32,6 @@ class XOSExampleServiceInstance(XOSResource):
             args["owner"] = self.get_xos_object(Service, throw_exception=True, name=provider_name)
 
         return args
-
-    def get_existing_objs(self):
-        args = self.get_xos_args(throw_exception=False)
-        return ExampleServiceInstance.objects.filter(owner=args["owner"], service_specific_id=args["service_specific_id"])
-        return []
 
     def can_delete(self, obj):
         return super(XOSExampleServiceInstance, self).can_delete(obj)

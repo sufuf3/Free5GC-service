@@ -25,6 +25,13 @@
   vars:
     - tenant_message: "{{ tenant_message }}"
     - service_message: "{{ service_message }}"
+    - foreground_color: "{{ foreground_color | default("#000000") }}"
+    - background_color: "{{ background_color | default("#FFFFFF") }}"
+    - images:
+        {% for image in images %}
+        - name: {{ image.name }}
+          url: {{ image.url }}
+        {% endfor %}
 
   roles:
     - install_apache

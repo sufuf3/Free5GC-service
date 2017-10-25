@@ -15,8 +15,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
+<html>
+<body style="background-color:{{ background_color }};">
+<font color="{{ foreground_color }}">
 
-ExampleService
- Service Message: "{{ service_message }}"
- Tenant Message: "{{ tenant_message }}"
+<h1>ExampleService</h1>
 
+<ul>
+<li>Service Message: "{{ service_message }}"</li>
+<li>Tenant Message: "{{ tenant_message }}"</li>
+</ul>
+
+{% if images %}
+<h2>Some images</h2>
+{% for image in images %}
+<img name="{{ image.name }}" href="{{ image.url }}">
+{% endfor %}
+{% endif %}
+
+</font>
+
+</body>
+</html>

@@ -30,8 +30,6 @@ topology_template:
           # The following will concatenate with base_url automatically, if
           # base_url is non-null.
           xproto: ./
-          tosca_custom_types: exampleservice.yaml
-          tosca_resource: tosca/resources/exampleservice.py, tosca/resources/exampleserviceinstance.py
           private_key: file:///opt/xos/key_import/exampleservice_rsa
           public_key: file:///opt/xos/key_import/exampleservice_rsa.pub
 

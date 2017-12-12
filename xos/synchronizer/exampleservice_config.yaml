@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-name: exampleservice-synchronizer
+name: exampleservice
 accessor:
   username: xosadmin@opencord.org
   password: "@/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org"
@@ -27,3 +27,4 @@ dependency_graph: "/opt/xos/synchronizers/exampleservice/model-deps"
 steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
 sys_dir: "/opt/xos/synchronizers/exampleservice/sys"
 model_policies_dir: "/opt/xos/synchronizers/exampleservice/model_policies"
+models_dir: "/opt/xos/synchronizers/exampleservice/models"

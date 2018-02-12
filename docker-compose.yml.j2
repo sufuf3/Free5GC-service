@@ -14,10 +14,8 @@ services:
       - {{ network }}
 {% endfor %}
     depends_on:
-      - registrator
       - xos_redis
     links:
-      - consul:consul
       - xos_redis:redis
     volumes:
       - {{ head_cord_profile_dir }}/xos_config_synchronizer.yaml:/opt/xos/xos_config.yaml:ro
@@ -30,6 +28,4 @@ services:
       options:
         max-size: "1000k"
         max-file: "5"
-    environment:
-      SERVICE_NAME: "xos-{{ item.name }}-synchronizer"
     restart: unless-stopped

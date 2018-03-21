@@ -14,13 +14,12 @@
 # limitations under the License.
 
 
-# This Dockerfile is DEPRECATED and will be removed imminently.
-
 # xosproject/exampleservice-synchronizer
 
 FROM xosproject/xos-synchronizer-base:candidate
 
-COPY . /opt/xos/synchronizers/exampleservice
+COPY xos/synchronizer /opt/xos/synchronizers/exampleservice
+COPY VERSION /opt/xos/synchronizers/exampleservice/
 
 ENTRYPOINT []
 

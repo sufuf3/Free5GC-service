@@ -15,9 +15,6 @@
 
 
 name: exampleservice
-accessor:
-  username: xosadmin@opencord.org
-  password: "@/opt/xos/services/exampleservice/credentials/xosadmin@opencord.org"
 required_models:
   - ExampleService
   - ExampleServiceInstance
@@ -28,3 +25,13 @@ steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
 sys_dir: "/opt/xos/synchronizers/exampleservice/sys"
 model_policies_dir: "/opt/xos/synchronizers/exampleservice/model_policies"
 models_dir: "/opt/xos/synchronizers/exampleservice/models"
+logging:
+  version: 1
+  handlers:
+    console:
+      class: logging.StreamHandler
+  loggers:
+    'multistructlog':
+      handlers:
+          - console
+      level: DEBUG

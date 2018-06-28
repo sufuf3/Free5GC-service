@@ -1,8 +1,8 @@
 # ExampleService #
 
-`ExampleService` is a service intended to demonstrate integration with the XOS `openstack` service. `ExampleService` provides a `ExampleServiceInstance` model that generates and hosts a web page, displaying two text strings on the web page: a `service_message` and a `tenant_message`. Each time a `ExampleServiceInstance` is created, a corresponding `Instance` will also be created which will in turn cause an OpenStack VM to be created that runs an apache web server hosting the web page.
+`ExampleService` is a service intended to demonstrate integration with the XOS `openstack` service. `ExampleService` provides a `ExampleServiceInstance` model that generates and hosts a web page, displaying two text strings on the web page: a `service_message` and a `tenant_message`. Each time a `ExampleServiceInstance` is created, a corresponding `OpenStackServiceInstance` will also be created which will in turn cause an OpenStack VM to be created that runs an apache web server hosting the web page.
 
-Destroying the `ExampleServiceInstance` will cause the linked `Instance` to also be destroyed, which will in turn cause the OpenStack VM to be cleaned up.
+Destroying the `ExampleServiceInstance` will cause the linked `OpenStackServiceInstance` to also be destroyed, which will in turn cause the OpenStack VM to be cleaned up.
 
 ## Implementation ##
 
@@ -14,11 +14,11 @@ Inside the `ExampleService` repository's `xos/synchronizer` directory, there are
 
     * `ExampleServiceInstance` holds per-tenant settings, including a `tenant_message`. Each `ExampleServiceInstance` corresponds to one web server serving one web page. This model has relations for `foreground_color` and `background_color` that allow some additional customization of the served page. `tenant_secret` is a secret that is installed into the container running the web server
 
-    * `Color` implements the color model used by the `foreground_color` and `background_color` fields of `SimpleExampleServiceInstance`.
+    * `Color` implements the color model used by the `foreground_color` and `background_color` fields of `ExampleServiceInstance`.
 
     * `EmbeddedImage` allows embedded images to be attached to web pages. As the foreign key relation is from the embedded image to the service instance, this forms a many-to-one relation that allows many images to be attached to a single web page. 
 
-2. The `model_policies` directory contains a model policy. This model policy is reponsible for automatically creating and deleting the `Instance` associated with each `ExampleServiceInstance`. 
+2. The `model_policies` directory contains a model policy. This model policy is reponsible for automatically creating and deleting the `OpenStackServiceInstance` associated with each `ExampleServiceInstance`. 
 
 3. The `sync_steps` directory contains a sync step that uses Ansible to provision the web server and configure the web page.
 
@@ -28,7 +28,7 @@ The following subsections work through a quick demonstration of `ExampleService`
 
 ### Prerequisites ###
 
-This document assumes that you have already installed [OpenStack-helm](../prereqs/openstack-helm). 
+This document assumes that you have already installed [OpenStack-helm](../prereqs/openstack-helm.md). 
 
 > Note: Depending on the method that was used to deploy your Kubernetes installation, your installation may require root privilege to interact with Kubernetes. If so, then you may need to use `sudo` with many of the commands in this tutorial, for example `sudo helm init` instead of `helm init`. 
 

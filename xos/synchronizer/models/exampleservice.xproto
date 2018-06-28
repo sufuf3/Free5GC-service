@@ -12,7 +12,11 @@ message Color (XOSBase){
      required string html_code = 2 [help_text = "Code for this color", db_index = False, max_length = 256, null = False, blank = False];
 }
 
-message ExampleServiceInstance (TenantWithContainer){
+message ServiceInstanceWithCompute (ServiceInstance) {
+    optional manytoone compute_instance->ComputeServiceInstance:service_instance_with_computes = 1 [db_index=True, null=True, blank=True];
+}
+
+message ExampleServiceInstance (ServiceInstanceWithCompute){
      option verbose_name = "Example Service Instance";
      required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
      optional manytoone foreground_color->Color:serviceinstance_foreground_colors = 3 [db_index = True, null = True, blank = True];

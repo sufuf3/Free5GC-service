@@ -16,16 +16,111 @@
 
 import os
 import sys
-from synchronizers.new_base.SyncInstanceUsingAnsible import SyncInstanceUsingAnsible
-from synchronizers.new_base.modelaccessor import *
-from xos.logger import Logger, logging
+import time
+from synchronizers.new_base.syncstep import SyncStep, DeferredException
+from synchronizers.new_base.ansible_helper import run_template_ssh
+from synchronizers.new_base.modelaccessor import ExampleServiceInstance
+from xosconfig import Config
+from multistructlog import create_logger
 
-parentdir = os.path.join(os.path.dirname(__file__), "..")
-sys.path.insert(0, parentdir)
+log = create_logger(Config().get('logging'))
 
-logger = Logger(level=logging.INFO)
+# TODO(smbaker): Move this to the core
+class SyncServiceInstanceWithComputeUsingAnsible(SyncStep):
+    def __init__(self, *args, **kwargs):
+        SyncStep.__init__(self, *args, **kwargs)
 
-class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
+    def defer_sync(self, o, reason):
+        log.info("defer object", object = str(o), reason = reason, **o.tologdict())
+        raise DeferredException("defer object %s due to %s" % (str(o), reason))
+
+    def get_extra_attributes(self, o):
+        # This is a place to include extra attributes that aren't part of the
+        # object itself.
+
+        return {}
+
+    def run_playbook(self, o, fields, template_name=None):
+        if not template_name:
+            template_name = self.template_name
+        tStart = time.time()
+        run_template_ssh(template_name, fields, object=o)
+        log.info("playbook execution time", time=int(time.time() - tStart), **o.tologdict())
+
+    def get_ssh_ip(self, instance):
+        for port in instance.ports.all():
+            if port.network.template and port.network.template.vtn_kind == "MANAGEMENT_LOCAL":
+                return port.ip
+
+        for port in instance.ports.all():
+            if port.network.template and port.network.template.vtn_kind == "MANAGEMENT_HOST":
+                return port.ip
+
+        return None
+
+    def get_ansible_fields(self, instance):
+        # return all of the fields that tell Ansible how to talk to the context
+        # that's setting up the container.
+
+        # Cast to the leaf_model. For OpenStackServiceInstance, this will allow us access to fields like "node"
+        instance = instance.leaf_model
+
+        node = getattr(instance, "node")
+        if not node:
+            raise Exception("Instance has no node for instance %s" % str(instance))
+
+        if not instance.slice:
+            raise Exception("Instance has no slice for instance %s" % str(instance))
+
+        if not instance.slice.service:
+            raise Exception("Instance's slice has no service for instance %s" % str(instance))
+
+        if not instance.slice.service.private_key_fn:
+            raise Exception("Instance's slice's service has no private_key_fn for instance %s" % str(instance))
+
+        key_name = instance.slice.service.private_key_fn
+        if not os.path.exists(key_name):
+            raise Exception("Node key %s does not exist for instance %s" % (key_name, str(instance)))
+
+        ssh_ip = self.get_ssh_ip(instance)
+        if not ssh_ip:
+            raise Exception("Unable to determine ssh ip for instance %s" % str(instance))
+
+        key = file(key_name).read()
+
+        fields = {"instance_name": instance.name,
+                  "hostname": node.name,
+                  "username": "ubuntu",
+                  "ssh_ip": ssh_ip,
+                  "private_key": key,
+                  "instance_id": "none", # is not used for proxy-ssh ansible connections
+                  }
+
+        return fields
+
+    def sync_record(self, o):
+        log.info("sync'ing object", object=str(o), **o.tologdict())
+
+        compute_service_instance = o.compute_instance
+        if not compute_service_instance:
+            self.defer_sync(o, "waiting on instance")
+            return
+
+        if not compute_service_instance.backend_handle:
+            self.defer_sync(o, "waiting on instance.backend_handle")
+            return
+
+        fields = self.get_ansible_fields(compute_service_instance)
+
+        fields["ansible_tag"] = getattr(o, "ansible_tag", o.__class__.__name__ + "_" + str(o.id))
+
+        fields.update(self.get_extra_attributes(o))
+
+        self.run_playbook(o, fields)
+
+        o.save()
+
+class SyncExampleServiceInstance(SyncServiceInstanceWithComputeUsingAnsible):
 
     provides = [ExampleServiceInstance]
 
@@ -35,30 +130,15 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
 
     template_name = "exampleserviceinstance_playbook.yaml"
 
-    service_key_name = "/opt/xos/synchronizers/exampleservice/exampleservice_private_key"
-
-    watches = [ModelLink(ServiceDependency,via='servicedependency'), ModelLink(ServiceMonitoringAgentInfo,via='monitoringagentinfo')]
-
     def __init__(self, *args, **kwargs):
         super(SyncExampleServiceInstance, self).__init__(*args, **kwargs)
-
-    def get_exampleservice(self, o):
-        if not o.owner:
-            return None
-
-        exampleservice = ExampleService.objects.filter(id=o.owner.id)
-
-        if not exampleservice:
-            return None
-
-        return exampleservice[0]
 
     # Gets the attributes that are used by the Ansible template but are not
     # part of the set of default attributes.
     def get_extra_attributes(self, o):
         fields = {}
         fields['tenant_message'] = o.tenant_message
-        exampleservice = self.get_exampleservice(o)
+        exampleservice = o.owner.leaf_model
         fields['service_message'] = exampleservice.service_message
 
         if o.foreground_color:
@@ -67,7 +147,7 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
         if o.background_color:
             fields["background_color"] = o.background_color.html_code
 
-        images=[]
+        images = []
         for image in o.embedded_images.all():
             images.append({"name": image.name,
                            "url": image.url})
@@ -80,33 +160,3 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
         # when the instance holding the exampleservice is deleted.
         pass
 
-    def handle_service_monitoringagentinfo_watch_notification(self, monitoring_agent_info):
-        if not monitoring_agent_info.service:
-            logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
-            return
-
-        if not monitoring_agent_info.target_uri:
-            logger.info("handle watch notifications for service monitoring agent info...ignoring because target_uri attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
-            return
-
-        objs = ExampleServiceInstance.objects.all()
-        for obj in objs:
-            if obj.owner.id != monitoring_agent_info.service.id:
-                logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is not matching" % (monitoring_agent_info))
-                return
-
-            instance = self.get_instance(obj)
-            if not instance:
-               logger.warn("handle watch notifications for service monitoring agent info...: No valid instance found for object %s" % (str(obj)))
-               return
-
-            logger.info("handling watch notification for monitoring agent info:%s for ExampleServiceInstance object:%s" % (monitoring_agent_info, obj))
-
-            #Run ansible playbook to update the routing table entries in the instance
-            fields = self.get_ansible_fields(instance)
-            fields["ansible_tag"] =  obj.__class__.__name__ + "_" + str(obj.id) + "_monitoring"
-            fields["target_uri"] = monitoring_agent_info.target_uri
-
-            template_name = "monitoring_agent.yaml"
-            super(SyncExampleServiceInstance, self).run_playbook(obj, fields, template_name)
-        pass

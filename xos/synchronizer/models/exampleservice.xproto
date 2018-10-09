@@ -19,7 +19,7 @@ message ServiceInstanceWithCompute (ServiceInstance) {
 message ExampleServiceInstance (ServiceInstanceWithCompute){
      option verbose_name = "Example Service Instance";
      required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
-     optional manytoone foreground_color->Color:serviceinstance_foreground_colors = 3 [db_index = True, null = True, blank = True];
+     optional manytoone foreground_color->Color:serviceinstance_foreground_colors = 2 [db_index = True, null = True, blank = True];
      optional manytoone background_color->Color:serviceinstance_background_colors = 3 [db_index = True, null = True, blank = True];
 }
 

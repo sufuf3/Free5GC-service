@@ -13,19 +13,19 @@ message Color (XOSBase){
 }
 
 message ServiceInstanceWithCompute (ServiceInstance) {
-    optional manytoone compute_instance->ComputeServiceInstance:service_instance_with_computes = 1 [db_index=True, null=True, blank=True];
+    optional manytoone compute_instance->ComputeServiceInstance:service_instance_with_computes = 1:1002 [db_index=True, null=True, blank=True];
 }
 
 message ExampleServiceInstance (ServiceInstanceWithCompute){
      option verbose_name = "Example Service Instance";
      required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
-     optional manytoone foreground_color->Color:serviceinstance_foreground_colors = 2 [db_index = True, null = True, blank = True];
-     optional manytoone background_color->Color:serviceinstance_background_colors = 3 [db_index = True, null = True, blank = True];
+     optional manytoone foreground_color->Color:serviceinstance_foreground_colors = 2:1001 [db_index = True, null = True, blank = True];
+     optional manytoone background_color->Color:serviceinstance_background_colors = 3:1002 [db_index = True, null = True, blank = True];
 }
 
 message EmbeddedImage (XOSBase){
      option verbose_name = "Embedded Image";
      required string name = 1 [help_text = "Name for this image", db_index = False, max_length = 256, null = False, blank = False];
      required string url = 2 [help_text = "URL for this image", db_index = False, max_length = 256, null = False, blank = False];
-     optional manytoone serviceinstance->ExampleServiceInstance:embedded_images = 3 [db_index = True, null = True, blank = True];
+     optional manytoone serviceinstance->ExampleServiceInstance:embedded_images = 3:1001 [db_index = True, null = True, blank = True];
 }

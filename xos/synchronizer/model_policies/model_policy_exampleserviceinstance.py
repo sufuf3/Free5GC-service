@@ -14,9 +14,9 @@
 # limitations under the License.
 
 
-from synchronizers.new_base.modelaccessor import OpenStackService, Service
-from synchronizers.new_base.policy import Policy
-from synchronizers.new_base.model_policies.model_policy_tenantwithcontainer import LeastLoadedNodeScheduler
+from xossynchronizer.modelaccessor import OpenStackService, Service
+from xossynchronizer.model_policies.policy import Policy
+from xossynchronizer.model_policies.model_policy_tenantwithcontainer import LeastLoadedNodeScheduler
 
 class ExampleServiceInstancePolicy(Policy):
     model_name = "ExampleServiceInstance"

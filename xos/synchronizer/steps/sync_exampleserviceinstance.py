@@ -15,11 +15,10 @@
 
 
 import os
-import sys
 import time
-from synchronizers.new_base.syncstep import SyncStep, DeferredException
-from synchronizers.new_base.ansible_helper import run_template_ssh
-from synchronizers.new_base.modelaccessor import ExampleServiceInstance
+from xossynchronizer.steps.syncstep import SyncStep, DeferredException
+from xossynchronizer.ansible_helper import run_template_ssh
+from xossynchronizer.modelaccessor import ExampleServiceInstance
 from xosconfig import Config
 from multistructlog import create_logger
 

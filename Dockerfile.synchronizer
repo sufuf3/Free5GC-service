@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# xosproject/exampleservice-synchronizer
+# xosproject/free5gcservice-synchronizer
 
 FROM xosproject/xos-synchronizer-base:2.1.38
 
-COPY xos/synchronizer /opt/xos/synchronizers/exampleservice
-COPY VERSION /opt/xos/synchronizers/exampleservice/
+COPY xos/synchronizer /opt/xos/synchronizers/free5gcservice
+COPY VERSION /opt/xos/synchronizers/free5gcservice/
 
 ENTRYPOINT []
 
-WORKDIR "/opt/xos/synchronizers/exampleservice"
+WORKDIR "/opt/xos/synchronizers/free5gcservice"
 
 # Label image
 ARG org_label_schema_schema_version=1.0
-ARG org_label_schema_name=exampleservice-synchronizer
+ARG org_label_schema_name=free5gcservice-synchronizer
 ARG org_label_schema_version=unknown
 ARG org_label_schema_vcs_url=unknown
 ARG org_label_schema_vcs_ref=unknown
@@ -52,5 +52,5 @@ LABEL org.label-schema.schema-version=$org_label_schema_schema_version \
       org.opencord.component.xos.vcs-url=$org_opencord_component_xos_vcs_url \
       org.opencord.component.xos.vcs-ref=$org_opencord_component_xos_vcs_ref
 
-CMD bash -c "service filebeat start; cd /opt/xos/synchronizers/exampleservice; ./run-from-api.sh"
+CMD bash -c "service filebeat start; cd /opt/xos/synchronizers/free5gcservice; ./run-from-api.sh"
 

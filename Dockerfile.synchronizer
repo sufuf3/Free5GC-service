@@ -52,5 +52,4 @@ LABEL org.label-schema.schema-version=$org_label_schema_schema_version \
       org.opencord.component.xos.vcs-url=$org_opencord_component_xos_vcs_url \
       org.opencord.component.xos.vcs-ref=$org_opencord_component_xos_vcs_ref
 
-CMD bash -c "service filebeat start; cd /opt/xos/synchronizers/free5gcservice; ./run-from-api.sh"
-
+CMD ["/usr/bin/python", "/opt/xos/synchronizers/free5gcservice/free5gcservice-synchronizer.py"]

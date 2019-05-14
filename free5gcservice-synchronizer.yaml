@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: free5gcservice-synchronizer
+  labels:
+    app: free5gcservice-synchronizer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: free5gcservice-synchronizer
+  template:
+    metadata:
+      labels:
+        app: free5gcservice-synchronizer
+    spec:
+      containers:
+        - name: synchronizer
+          image: sufuf3/free5gcservice-synchronizer
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: certchain-volume
+              mountPath: /usr/local/share/ca-certificates/local_certs.crt
+              subPath: config/ca_cert_chain.pem
+      volumes:
+        - name: certchain-volume
+          configMap:
+            name: ca-certificates
+            items:
+              - key: chain
+                path: config/ca_cert_chain.pem

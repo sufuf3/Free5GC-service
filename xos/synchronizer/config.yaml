@@ -14,24 +14,35 @@
 # limitations under the License.
 
 
-name: exampleservice
+name: free5gcservice
+accessor:
+  username: admin@opencord.org
+  password: letmein
+  endpoint: xos-core:50051
 required_models:
-  - ExampleService
-  - ExampleServiceInstance
+  - Free5GCService
+  - Free5GCServiceInstance
+  - KubernetesResourceInstance
   - ServiceDependency
-  - ServiceMonitoringAgentInfo
-dependency_graph: "/opt/xos/synchronizers/exampleservice/model-deps"
-steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
-sys_dir: "/opt/xos/synchronizers/exampleservice/sys"
-model_policies_dir: "/opt/xos/synchronizers/exampleservice/model_policies"
-models_dir: "/opt/xos/synchronizers/exampleservice/models"
-logging:
-  version: 1
-  handlers:
-    console:
-      class: logging.StreamHandler
-  loggers:
-    'multistructlog':
-      handlers:
-          - console
-      level: DEBUG
+  - KubernetesService
+  - KubernetesServiceInstance
+  - KubernetesConfigMap
+  - KubernetesSecret
+  - KubernetesConfigVolumeMount
+  - KubernetesSecretVolumeMount
+#  - ServiceMonitoringAgentInfo
+dependency_graph: "/opt/xos/synchronizers/free5gcservice/model-deps"
+#steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
+sys_dir: "/opt/xos/synchronizers/free5gcservice/sys"
+model_policies_dir: "/opt/xos/synchronizers/free5gcservice/model_policies"
+models_dir: "/opt/xos/synchronizers/free5gcservice/models"
+#logging:
+#  version: 1
+#  handlers:
+#    console:
+#      class: logging.StreamHandler
+#  loggers:
+#    'multistructlog':
+#      handlers:
+#          - console
+#      level: DEBUG

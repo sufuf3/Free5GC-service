@@ -38,11 +38,14 @@ class Free5GCServiceInstancePolicy(Policy):
         instance = KubernetesResourceInstance(name=name, owner=owner,
                                               resource_definition=resource_definition,
                                               no_sync=False)
-
         instance.save()
+        cfmap = KubernetesConfigMap(name="free5gc-map-%s" % service_instance.id, trust_domain=slice.trust_domain, data=json.dumps(data))
+        cfmap.save()
+
 
     def handle_delete(self, service_instance):
         log.info("handle_delete Free5GCServiceInstance")
         service_instance.compute_instance.delete()
+        KubernetesConfigMap.objects.get(name="free5gc-map-%s" % service_instance.id).delete()
         service_instance.compute_instance = None
         service_instance.save(update_fields=["compute_instance"])

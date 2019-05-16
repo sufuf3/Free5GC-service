@@ -15,4 +15,4 @@
 # limitations under the License.
 
 PASSWORD=`cat /opt/credentials/xosadmin@opencord.org`
-curl -H "xos-username: xosadmin@opencord.org" -H "xos-password: $PASSWORD" -X POST --data-binary @exampleservice.yaml 127.0.0.1:9102/run
+curl -H "xos-username: xosadmin@opencord.org" -H "xos-password: $PASSWORD" -X POST --data-binary @free5gcservice-tosca.yaml 127.0.0.1:30007/run

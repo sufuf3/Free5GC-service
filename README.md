@@ -33,7 +33,13 @@ PS. Using NodePort
 
 Access NODE_IP:31727 via web browser.
 
-#### 4. Submit TOSCA
+#### 4. Create Services
+```sh
+kubectl create -f deploy/nctu5GC/smf-service-NP.yaml
+kubectl create -f deploy/nctu5GC/pcrf-service.yaml
+```
+
+#### 5. Submit TOSCA
 
 ```sh
 cd xos/free5gcs && sh apply_tosca.sh

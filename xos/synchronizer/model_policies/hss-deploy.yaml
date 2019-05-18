@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextepc-hss-deployment
+  namespace: MY_NAMESPACE
+  labels:
+    app: nextepc-hss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextepc-hss
+  template:
+    metadata:
+      labels:
+        app: nextepc-hss
+      annotations:
+        cni.projectcalico.org/ipAddrs: "[\"HSS_ADDR\"]"
+    spec:
+      hostname: hss
+      subdomain: localdomain
+      hostAliases:
+      - ip: "AMF_ADDR"
+        hostnames:
+        - "amf.localdomain"
+      - ip: "HSS_ADDR"
+        hostnames:
+        - "hss.localdomain"
+      - ip: "SMF_ADDR"
+        hostnames:
+        - "smf.localdomain"
+      - ip: "PCRF_ADDR"
+        hostnames:
+        - "pcrf.localdomain"
+      - ip: "UPF_ADDR"
+        hostnames:
+        - "upf.localdomain"
+      containers:
+      - name: nextepc-hss
+        image: "sufuf3/nextepc-build:latest"
+        command: ["/bin/bash"]
+        args: ["-c", "/usr/src/free5gc/nextepc-hssd"]
+        ports:
+          - containerPort: 80
+            name: api
+          - containerPort: 5868
+            name: api1
+          - containerPort: 3868
+            name: api2
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DB_URI
+            value: mongodb://mongo-external.MY_NAMESPACE.svc.cluster.local/nextepc
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/src/free5gc/install/etc/free5gc/free5gc.conf
+          subPath: free5gc.conf
+        - name: hss-volume
+          mountPath: /usr/src/free5gc/install/etc/free5gc/hss.conf
+          subPath: hss.conf
+        - name: freediameter-volume
+          mountPath: /usr/src/free5gc/install/etc/free5gc/freeDiameter/hss.conf
+          subPath: hss.conf
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "SYS_TIME"]
+      securityContext:
+        sysctls:
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "0"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: free5gc-config
+            items:
+            - key: config.file
+              path: free5gc.conf
+        - name: hss-volume
+          configMap:
+            name: hss-config
+            items:
+            - key: config.file
+              path: hss.conf
+        - name: freediameter-volume
+          configMap:
+            name: freediameter-hss-config
+            items:
+            - key: config.file
+              path: hss.conf

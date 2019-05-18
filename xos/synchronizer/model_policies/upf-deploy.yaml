@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upf-deployment
+  namespace: MY_NAMESPACE
+  labels:
+    app: upf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upf
+  template:
+    metadata:
+      labels:
+        app: upf
+      annotations:
+        cni.projectcalico.org/ipAddrs: "[\"UPF_ADDR\"]"
+        k8s.v1.cni.cncf.io/networks: sriov-net1
+    spec:
+      hostname: upf
+      subdomain: localdomain
+      hostAliases:
+      - ip: "AMF_ADDR"
+        hostnames:
+        - "amf.localdomain"
+      - ip: "HSS_ADDR"
+        hostnames:
+        - "hss.localdomain"
+      - ip: "SMF_ADDR"
+        hostnames:
+        - "smf.localdomain"
+      - ip: "PCRF_ADDR"
+        hostnames:
+        - "pcrf.localdomain"
+      - ip: "UPF_ADDR"
+        hostnames:
+        - "upf.localdomain"
+      containers:
+      - name: upf-container
+        image: "sufuf3/nextepc-build:latest"
+        command: ["/bin/bash"]
+        args: ["-c", "ip addr add GTPU_ADDR/24 dev net1 && /root/setup.sh && /usr/src/free5gc/free5gc-upfd"]
+        stdin: true
+        tty: true
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DB_URI
+            value: mongodb://mongo-external.MY_NAMESPACE.svc.cluster.local/nextepc
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/src/free5gc/install/etc/free5gc/free5gc.conf
+          subPath: free5gc.conf
+        - name: uptun-path
+          mountPath: /dev/net/tun
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "SYS_TIME"]
+        resources:
+          requests:
+            intel.com/sriov_net: '1'
+          limits:
+            intel.com/sriov_net: '1'
+      securityContext:
+        sysctls:
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "0"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: free5gc-config
+            items:
+            - key: config.file
+              path: free5gc.conf
+        - name: uptun-path
+          hostPath:
+            path: /dev/net/tun

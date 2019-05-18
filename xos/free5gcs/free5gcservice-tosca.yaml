@@ -30,18 +30,33 @@ description: Make Free5GC using Kubernetes Synchronizer
 
 topology_template:
   node_templates:
-    f5gcsite:
-      type: tosca.nodes.Site
+    free5gcservice:
+      type: tosca.nodes.Free5GCService
       properties:
-        name: "f5gcsite"
-        must-exist: true
-
+        name: service
+        namespace: free5gc
+        amf: 10.233.78.202
+        hss: 10.233.78.203
+        smf: 10.233.78.204
+        pcrf: 10.233.78.205
+        upf: 10.233.78.206
+        1ap: 192.188.2.100
+        gtpu: 192.188.2.101
+      requirements:
+        - site:
+            node: f5gcsite
+            relationship: tosca.relationships.BelongsToOne
+        - trust_domain:
+            node: default_trustdomain
+            relationship: tosca.relationships.BelongsToOne
+        - service:
+            node: free5gcservice
+            relationship: tosca.relationships.BelongsToOne
     service#kubernetes:
           type: tosca.nodes.KubernetesService
           properties:
             name: kubernetes
             must-exist: true
-
     f5gc_trustdomain:
       type: tosca.nodes.TrustDomain
       properties:
@@ -50,140 +65,3 @@ topology_template:
         - owner:
             node: service#kubernetes
             relationship: tosca.relationships.BelongsToOne
-
-    f5gc_principal:
-      type: tosca.nodes.Principal
-      properties:
-        name: "f5gc-account"
-      requirements:
-        - trust_domain:
-            node: f5gc_trustdomain
-            relationship: tosca.relationships.BelongsToOne
-
-    amf_resource:
-      type: tosca.nodes.KubernetesResourceInstance
-      properties:
-        name: "amf"
-        resource_definition: |
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: amf-deployment
-            namespace: cn1
-            labels:
-              app: amf
-          spec:
-            replicas: 1
-            selector:
-              matchLabels:
-                app: amf
-            template:
-              metadata:
-                labels:
-                  app: amf
-                annotations:
-                  cni.projectcalico.org/ipAddrs: "[\"10.233.100.202\"]"
-                  k8s.v1.cni.cncf.io/networks: sriov-net1
-              spec:
-                hostname: amf
-                subdomain: localdomain
-                hostAliases:
-                - ip: "10.233.100.202"
-                  hostnames:
-                  - "amf.localdomain"
-                - ip: "10.233.100.203"
-                  hostnames:
-                  - "hss.localdomain"
-                - ip: "10.233.100.204"
-                  hostnames:
-                  - "smf.localdomain"
-                - ip: "10.233.100.205"
-                  hostnames:
-                  - "pcrf.localdomain"
-                - ip: "10.233.100.206"
-                  hostnames:
-                  - "upf.localdomain"
-                containers:
-                - name: amf-container
-                  image: "sufuf3/nextepc-build:latest"
-                  command: ["/bin/bash"]
-                  args: ["-c", "ip addr add 192.188.2.100/24 dev net1 && /usr/src/free5gc/free5gc-amfd"]
-                  ports:
-                    - containerPort: 5868
-                      name: api1
-                    - containerPort: 3868
-                      name: api2
-                  stdin: true
-                  tty: true
-                  imagePullPolicy: IfNotPresent
-                  env:
-                    - name: DB_URI
-                      value: mongodb://mongo-external.cn1.svc.cluster.local/nextepc
-                  volumeMounts:
-                  - name: config-volume
-                    mountPath: /usr/src/free5gc/install/etc/free5gc/free5gc.conf
-                    subPath: free5gc.conf
-                  - name: freediameter-volume
-                    mountPath: /usr/src/free5gc/install/etc/free5gc/freeDiameter/amf.conf
-                    subPath: amf.conf
-                  securityContext:
-                    privileged: true
-                    capabilities:
-                      add: ["NET_ADMIN", "SYS_TIME"]
-                  resources:
-                    requests:
-                      intel.com/sriov_net: '1' 
-                    limits:
-                      intel.com/sriov_net: '1'
-                #hostNetwork: true
-                securityContext:
-                  sysctls:
-                    - name: net.ipv6.conf.all.disable_ipv6
-                      value: "0"
-                volumes:
-                  - name: config-volume
-                    configMap:
-                      name: free5gc-config
-                      items:
-                      - key: config.file
-                        path: free5gc.conf
-                  - name: freediameter-volume
-                    configMap:
-                      name: freediameter-amf-config
-                      items:
-                      - key: config.file
-                        path: amf.conf
-      requirements:
-        - owner:
-            node: service#kubernetes
-            relationship: tosca.relationships.BelongsToOne
-        - slice:
-            node: f5gc_slice
-            relationship: tosca.relationships.BelongsToOne
-
-    f5gc_slice:
-      type: tosca.nodes.Slice
-      properties:
-        name: "f5gc_slice"
-      requirements:
-        - site:
-            node: f5gcsite
-            relationship: tosca.relationships.BelongsToOne
-        - trust_domain:
-            node: f5gc_trustdomain
-            relationship: tosca.relationships.BelongsToOne
-        - principal:
-            node: f5gc_principal
-            relationship: tosca.relationships.BelongsToOne
-
-    service#provider:
-      type: tosca.nodes.Free5GCService
-      properties:
-        name: Free5GC
-        provider_data: new Free5GC
-    serviceinstance#provider:
-      type: tosca.nodes.Free5GCServiceInstance
-      properties:
-        name: Free5GC Service Instance
-        provider_instance_data: new Free5GC instance
-

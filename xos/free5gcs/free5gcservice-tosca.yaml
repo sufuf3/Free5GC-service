@@ -40,7 +40,7 @@ topology_template:
         smf: 10.233.78.204
         pcrf: 10.233.78.205
         upf: 10.233.78.206
-        1ap: 192.188.2.100
+        s1ap: 192.188.2.100
         gtpu: 192.188.2.101
       requirements:
         - site:

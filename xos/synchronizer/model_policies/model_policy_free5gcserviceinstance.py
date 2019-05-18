@@ -29,9 +29,17 @@ class Free5GCServiceInstancePolicy(Policy):
         cm_files = ["free5gc-cm.yaml", "freediameter-cm.yaml", "nextepc-cm.yaml"]
         for file in cm_files:
             input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
+            # SED
             with open(input_file, 'r') as stream:
                 try:
-                    resource_definition=json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    rd_tmp = json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    rd_tmp = rd_tmp.replace("NAMESPACE", '"vacio"')
+                    rd_tmp = rd_tmp.replace("AMF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("UPF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("SMF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("HSS_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("S1AP_ADDR", '"vacio"')
+                    resource_definition = rd_tmp.replace("GTPU_ADDR", '"vacio"')
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"
@@ -46,7 +54,15 @@ class Free5GCServiceInstancePolicy(Policy):
             input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
             with open(input_file, 'r') as stream:
                 try:
-                    resource_definition=json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    rd_tmp = json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    rd_tmp = rd_tmp.replace("MY_NAMESPACE", '"vacio"')
+                    rd_tmp = rd_tmp.replace("AMF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("UPF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("SMF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("HSS_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("PCRF_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("S1AP_ADDR", '"vacio"')
+                    resource_definition = rd_tmp.replace("GTPU_ADDR", '"vacio"')
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"

@@ -35,20 +35,16 @@ class Free5GCServicePolicy(Policy):
 
     def handle_update(self, service_instance):
         log.info("[Handle] Update Free5GCService")
-        if not service_instance.compute_instance:
-            type = service_instance.component_type.lower()
-            name = type + "%s" % service_instance.id
-            log.info(self)
-            log.info(service_instance)
-            log.info(KubernetesService.objects.first())
-
-            compute_service_instance = Free5GCServiceInstance(name=name, owner=service_instance,
-                                                              type=service_instance.component_type, no_sync=False)
-            compute_service_instance.save()
+        name = "free5gc-%s" % service_instance.id
+        log.info(self)
+        log.info(service_instance)
+        log.info(KubernetesService.objects.first())
+        compute_service_instance = Free5GCServiceInstance(name=name, owner=service_instance,
+                                                            no_sync=False)
+        compute_service_instance.save()
 
     def handle_delete(self, service_instance):
         log.info("[Handle] Delete Free5GCService")
-        if service_instance.compute_instance:
-            service_instance.compute_instance.delete()
-            service_instance.compute_instance = None
-            service_instance.save(update_fields=["compute_instance"])
+        service_instance.compute_instance.delete()
+        service_instance.compute_instance = None
+        service_instance.save(update_fields=["compute_instance"])

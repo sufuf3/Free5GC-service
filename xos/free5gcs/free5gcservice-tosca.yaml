@@ -42,6 +42,24 @@ topology_template:
             name: kubernetes
             must-exist: true
 
+    f5gc_trustdomain:
+      type: tosca.nodes.TrustDomain
+      properties:
+        name: "f5gc-trust"
+      requirements:
+        - owner:
+            node: service#kubernetes
+            relationship: tosca.relationships.BelongsToOne
+
+    f5gc_principal:
+      type: tosca.nodes.Principal
+      properties:
+        name: "f5gc-account"
+      requirements:
+        - trust_domain:
+            node: f5gc_trustdomain
+            relationship: tosca.relationships.BelongsToOne
+
     amf_resource:
       type: tosca.nodes.KubernetesResourceInstance
       properties:
@@ -139,11 +157,14 @@ topology_template:
         - owner:
             node: service#kubernetes
             relationship: tosca.relationships.BelongsToOne
+        - slice:
+            node: f5gc_slice
+            relationship: tosca.relationships.BelongsToOne
 
     f5gc_slice:
       type: tosca.nodes.Slice
       properties:
-        name: "f5gcslice"
+        name: "f5gc_slice"
       requirements:
         - site:
             node: f5gcsite

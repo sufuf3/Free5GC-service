@@ -2,6 +2,8 @@ import base64
 import jinja2
 import json
 import yaml
+import os
+import fileinput
 from synchronizers.new_base.modelaccessor import *
 from synchronizers.new_base.policy import Policy
 
@@ -19,33 +21,51 @@ class Free5GCServiceInstancePolicy(Policy):
         return self.handle_update(service_instance)
 
     def handle_update(self, service_instance):
-        log.info("handle_update Free5GCServiceInstance")
+        log.info("handle_update Free5GCServiceInstance", object=str(service_instance))
+        t = TrustDomain(name="f5gc-trust", owner=KubernetesService.objects.first())
+        t.save()
         owner = KubernetesService.objects.first()
-        type = service_instance.type.lower()
-        file = "free5gc-" + type + ".yaml"
-        input_file = os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))),
-                                  file)
-        with open(input_file, 'r') as stream:
-            try:
-                resource_definition = json.dumps(
-                    yaml.load(stream), sort_keys=True, indent=2)
-                stream.close()
-            except yaml.YAMLError as exc:
-                resource_definition = "{}"
-                print(exc)
-
-        name = "free5gc-" + type + "%s" % service_instance.id
-        instance = KubernetesResourceInstance(name=name, owner=owner,
+        ## Configmaps
+        cm_files = ["free5gc-cm.yaml", "freediameter-cm.yaml", "nextepc-cm.yaml"]
+        for file in cm_files:
+            input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
+            with open(input_file, 'r') as stream:
+                try:
+                    resource_definition=json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    stream.close()
+                except yaml.YAMLError as exc:
+                    resource_definition="{}"
+                    print(exc)
+            name = "free5gc-cm-%s" % service_instance.id
+            cm = KubernetesConfigMap(name=name, trust_domain=t,
+                                              data=resource_definition)
+            cm.save()
+        ## AMF, SMF, UPF, HSS, PCRF
+        yaml_files = ["amf-deploy.yaml", "hss-deploy.yaml", "pcrf-deploy.yaml", "smf-deploy.yaml", "upf-deploy.yaml"]
+        for file in yaml_files:
+            input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
+            with open(input_file, 'r') as stream:
+                try:
+                    resource_definition=json.dumps(yaml.load(stream), sort_keys=True, indent=2)
+                    stream.close()
+                except yaml.YAMLError as exc:
+                    resource_definition="{}"
+                    print(exc)
+            name = "free5gc-" + "%s" % service_instance.id
+            instance = KubernetesResourceInstance(name=name, owner=owner,
                                               resource_definition=resource_definition,
                                               no_sync=False)
-        instance.save()
-        cfmap = KubernetesConfigMap(name="free5gc-map-%s" % service_instance.id, trust_domain=slice.trust_domain, data=json.dumps(data))
-        cfmap.save()
+            instance.save()
+
+      
+
+
+
+
 
 
     def handle_delete(self, service_instance):
         log.info("handle_delete Free5GCServiceInstance")
         service_instance.compute_instance.delete()
-        KubernetesConfigMap.objects.get(name="free5gc-map-%s" % service_instance.id).delete()
         service_instance.compute_instance = None
         service_instance.save(update_fields=["compute_instance"])

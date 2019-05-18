@@ -32,17 +32,6 @@ required_models:
   - KubernetesSecretVolumeMount
 #  - ServiceMonitoringAgentInfo
 dependency_graph: "/opt/xos/synchronizers/free5gcservice/model-deps"
-#steps_dir: "/opt/xos/synchronizers/exampleservice/steps"
 sys_dir: "/opt/xos/synchronizers/free5gcservice/sys"
 model_policies_dir: "/opt/xos/synchronizers/free5gcservice/model_policies"
 models_dir: "/opt/xos/synchronizers/free5gcservice/models"
-#logging:
-#  version: 1
-#  handlers:
-#    console:
-#      class: logging.StreamHandler
-#  loggers:
-#    'multistructlog':
-#      handlers:
-#          - console
-#      level: DEBUG

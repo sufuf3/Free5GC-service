@@ -1,7 +1,7 @@
 option app_label = "free5gcservice";
 option name = "free5gcservice";
 
-message Free5GService (Service){
+message Free5GCService (Service){
     option verbose_name = "Free5GC Service";
     option description = "Service that demonstrates integration with Free5gc compute resources";
 

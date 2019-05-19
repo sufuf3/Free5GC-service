@@ -9,25 +9,25 @@ kubectl create -f free5gcservice-synchronizer.yaml
 #### 1. Create namespace
 
 ```sh
-kubectl create -f deploy/nctu5GC/namespace.yaml
+kubectl create -f deploy/namespace.yaml
 ```
 #### 2. Create mongodb
-1. Update `deploy/nctu5GC/mongodb/pv.yaml`
+1. Update `deploy/mongodb/pv.yaml`
 ```sh
-sed -i "s/192.168.26.11/${NFS_SERVER_IP}/g" deploy/nctu5GC/mongodb/pv.yaml
+sed -i "s/192.168.26.11/${NFS_SERVER_IP}/g" deploy/mongodb/pv.yaml
 ```
 2. Create mongodb
 ```sh
-kubectl create -f deploy/nctu5GC/mongodb/pv.yaml
-kubectl create -f deploy/nctu5GC/mongodb/statefulset.yaml
-kubectl create -f deploy/nctu5GC/mongodb/service-NP.yaml
+kubectl create -f deploy/mongodb/pv.yaml
+kubectl create -f deploy/mongodb/statefulset.yaml
+kubectl create -f deploy/mongodb/service-NP.yaml
 ```
 
 #### 3. Create webui
 
 ```sh
-kubectl create -f deploy/nctu5GC/webui-deployment.yaml
-kubectl create -f deploy/nctu5GC/webui-service-NP.yaml
+kubectl create -f deploy/webui-deployment.yaml
+kubectl create -f deploy/webui-service-NP.yaml
 ```
 PS. Using NodePort
 
@@ -35,8 +35,8 @@ Access NODE_IP:31727 via web browser.
 
 #### 4. Create Services
 ```sh
-kubectl create -f deploy/nctu5GC/smf-service-NP.yaml
-kubectl create -f deploy/nctu5GC/pcrf-service.yaml
+kubectl create -f deploy/smf-service-NP.yaml
+kubectl create -f deploy/pcrf-service.yaml
 ```
 
 #### 5. Submit TOSCA

@@ -1,6 +1,13 @@
 # Free5GC-service
 
 ## Install
+### 0. Before
+
+```sh
+helm install -n xos-core cord/xos-core --set xos_projectName="M-CORD"
+helm install -n kubernetes cord/kubernetes
+```
+
 ### 1. Run Synchronizer Container
 ```sh
 kubectl create -f free5gcservice-synchronizer.yaml
@@ -43,6 +50,19 @@ kubectl create -f deploy/pcrf-service.yaml
 
 ```sh
 cd xos/free5gcs && sh apply_tosca.sh
+```
+
+---
+
+## Note
+
+If we want to re-deploy synchronizer, restart XOS.
+
+```sh
+helm delete xos-core --purge
+helm install -n xos-core cord/xos-core --set xos_projectName="M-CORD"
+kubectl delete -f free5gcservice-synchronizer.yaml
+kubectl apply -f free5gcservice-synchronizer.yaml
 ```
 
 ---

@@ -20,6 +20,7 @@
 
 import importlib
 import os
+import sys
 from xossynchronizer import Synchronizer
 from xosconfig import Config
 

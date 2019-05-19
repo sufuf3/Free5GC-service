@@ -25,21 +25,28 @@ class Free5GCServiceInstancePolicy(Policy):
         t = TrustDomain(name="f5gc-trust", owner=KubernetesService.objects.first())
         t.save()
         owner = KubernetesService.objects.first()
+        namespace = Free5GCService.objects.first().namespace
+        amf = Free5GCService.objects.first().amf
+        upf = Free5GCService.objects.first().upf
+        hss = Free5GCService.objects.first().hss
+        smf = Free5GCService.objects.first().smf
+        pcrf = Free5GCService.objects.first().pcrf
+        s1ap = Free5GCService.objects.first().s1ap
+        gtpu = Free5GCService.objects.first().gtpu
         ## Configmaps
         cm_files = ["free5gc-cm.yaml", "freediameter-cm.yaml", "nextepc-cm.yaml"]
         for file in cm_files:
             input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
-            # SED
             with open(input_file, 'r') as stream:
                 try:
                     rd_tmp = json.dumps(yaml.load(stream), sort_keys=True, indent=2)
-                    rd_tmp = rd_tmp.replace("NAMESPACE", '"vacio"')
-                    rd_tmp = rd_tmp.replace("AMF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("UPF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("SMF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("HSS_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("S1AP_ADDR", '"vacio"')
-                    resource_definition = rd_tmp.replace("GTPU_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("MY_NAMESPACE", namespace)
+                    rd_tmp = rd_tmp.replace("AMF_ADDR", amf)
+                    rd_tmp = rd_tmp.replace("UPF_ADDR", upf)
+                    rd_tmp = rd_tmp.replace("SMF_ADDR", smf)
+                    rd_tmp = rd_tmp.replace("HSS_ADDR", hss)
+                    rd_tmp = rd_tmp.replace("S1AP_ADDR", s1ap)
+                    resource_definition = rd_tmp.replace("GTPU_ADDR", gtpu)
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"
@@ -56,13 +63,13 @@ class Free5GCServiceInstancePolicy(Policy):
                 try:
                     rd_tmp = json.dumps(yaml.load(stream), sort_keys=True, indent=2)
                     rd_tmp = rd_tmp.replace("MY_NAMESPACE", '"vacio"')
-                    rd_tmp = rd_tmp.replace("AMF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("UPF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("SMF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("HSS_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("PCRF_ADDR", '"vacio"')
-                    rd_tmp = rd_tmp.replace("S1AP_ADDR", '"vacio"')
-                    resource_definition = rd_tmp.replace("GTPU_ADDR", '"vacio"')
+                    rd_tmp = rd_tmp.replace("MY_NAMESPACE", namespace)
+                    rd_tmp = rd_tmp.replace("AMF_ADDR", amf)
+                    rd_tmp = rd_tmp.replace("UPF_ADDR", upf)
+                    rd_tmp = rd_tmp.replace("SMF_ADDR", smf)
+                    rd_tmp = rd_tmp.replace("HSS_ADDR", hss)
+                    rd_tmp = rd_tmp.replace("S1AP_ADDR", s1ap)
+                    resource_definition = rd_tmp.replace("GTPU_ADDR", gtpu)
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"

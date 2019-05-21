@@ -32,7 +32,7 @@ Config.init(base_config_file, 'synchronizer-config-schema.yaml')
 synchronizer_path = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), "../../synchronizers/new_base")
 sys.path.append(synchronizer_path)
-mod = importlib.import_module("xos-synchronizer")
+mod = importlib.import_module("xossynchronizer")
 mod.main()
 
 #Synchronizer().run()

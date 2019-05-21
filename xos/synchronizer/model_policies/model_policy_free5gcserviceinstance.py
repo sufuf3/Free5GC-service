@@ -4,8 +4,11 @@ import json
 import yaml
 import os
 import fileinput
-from synchronizers.new_base.modelaccessor import *
-from synchronizers.new_base.policy import Policy
+#from synchronizers.new_base.modelaccessor import *
+#from synchronizers.new_base.policy import Policy
+from xossynchronizer.modelaccessor import *
+from xossynchronizer.model_policies.policy import Policy
+from xossynchronizer.model_policies.model_policy_tenantwithcontainer import LeastLoadedNodeScheduler
 
 from xosconfig import Config
 from multistructlog import create_logger

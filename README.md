@@ -4,7 +4,7 @@
 ### 0. Before
 
 ```sh
-helm install -n xos-core cord/xos-core --set xos_projectName="M-CORD"
+helm install -n xos-core cord/xos-core --version 2.3.3
 helm install -n kubernetes cord/kubernetes
 ```
 

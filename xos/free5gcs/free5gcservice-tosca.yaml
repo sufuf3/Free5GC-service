@@ -30,18 +30,23 @@ description: Make Free5GC using Kubernetes Synchronizer
 
 topology_template:
   node_templates:
-    free5gcservice:
+    service#free5gcservice:
       type: tosca.nodes.Free5GCService
       properties:
-        name: service
-        namespace: free5gc
-        amf: 10.233.78.202
-        hss: 10.233.78.203
-        smf: 10.233.78.204
-        pcrf: 10.233.78.205
-        upf: 10.233.78.206
-        s1ap: 192.188.2.100
-        gtpu: 192.188.2.101
+        name: free5gcservice
+        must-exist: true
+    free5gcserviceinstance:
+      type: tosca.nodes.Free5GCServiceInsrance
+      properties:
+        tenant_name: service
+        tenant_namespace: free5gc
+        tenant_amf: 10.233.78.202
+        tenant_hss: 10.233.78.203
+        tenant_smf: 10.233.78.204
+        tenant_pcrf: 10.233.78.205
+        tenant_upf: 10.233.78.206
+        tenant_s1ap: 192.188.2.100
+        tenant_gtpu: 192.188.2.101
       requirements:
         - site:
             node: f5gcsite

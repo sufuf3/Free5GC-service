@@ -27,14 +27,14 @@ class Free5GCServiceInstancePolicy(Policy):
         t = TrustDomain(name="f5gc-trust", owner=KubernetesService.objects.first())
         t.save()
         owner = KubernetesService.objects.first()
-        namespace = service_instance.namespace
-        amf = service_instance.amf
-        upf = service_instance.upf
-        hss = service_instance.hss
-        smf = service_instance.smf
-        pcrf = service_instance.pcrf
-        s1ap = service_instance.s1ap
-        gtpu = service_instance.gtpu
+        namespace = service_instance.tenant_namespace
+        amf = service_instance.tenant_amf
+        upf = service_instance.tenant_upf
+        hss = service_instance.tenant_hss
+        smf = service_instance.tenant_smf
+        pcrf = service_instance.tenant_pcrf
+        s1ap = service_instance.tenant_s1ap
+        gtpu = service_instance.tenant_gtpu
         ## Configmaps
         cm_files = ["free5gc-cm.yaml", "freediameter-cm.yaml", "nextepc-cm.yaml"]
         for file in cm_files:

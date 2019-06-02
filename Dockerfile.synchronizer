@@ -14,12 +14,10 @@
 
 # xosproject/free5gcservice-synchronizer
 
-FROM xosproject/xos-synchronizer-base:2.2.5
+FROM xosproject/xos-synchronizer-base:2.1.54
 
 COPY xos/synchronizer /opt/xos/synchronizers/free5gcservice
 COPY VERSION /opt/xos/synchronizers/free5gcservice/
-
-ENTRYPOINT []
 
 WORKDIR "/opt/xos/synchronizers/free5gcservice"
 

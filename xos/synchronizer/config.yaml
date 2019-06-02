@@ -19,7 +19,6 @@ accessor:
   username: admin@opencord.org
   password: letmein
   endpoint: xos-core:50051
-core_version: ">=3.2.2"
 required_models:
   - Free5GCService
   - Free5GCServiceInstance

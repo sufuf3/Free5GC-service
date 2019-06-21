@@ -48,14 +48,16 @@ class Free5GCServiceInstancePolicy(Policy):
                     rd_tmp = rd_tmp.replace("SMF_ADDR", smf)
                     rd_tmp = rd_tmp.replace("HSS_ADDR", hss)
                     rd_tmp = rd_tmp.replace("S1AP_ADDR", s1ap)
+                    rd_tmp = rd_tmp.replace("PCRF_ADDR", pcrf)
                     resource_definition = rd_tmp.replace("GTPU_ADDR", gtpu)
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"
                     print(exc)
-            name = "free5gc-cm-%s" % service_instance.id
-            cm = KubernetesConfigMap(name=name, trust_domain=t,
-                                              data=resource_definition)
+            name = "free5gc-cm-" + file.split(".")[0]
+            cm = KubernetesResourceInstance(name=name, owner=owner,
+                                              resource_definition=resource_definition,
+                                              no_sync=False)
             cm.save()
         ## AMF, SMF, UPF, HSS, PCRF
         yaml_files = ["amf-deploy.yaml", "hss-deploy.yaml", "pcrf-deploy.yaml", "smf-deploy.yaml", "upf-deploy.yaml"]
@@ -64,19 +66,19 @@ class Free5GCServiceInstancePolicy(Policy):
             with open(input_file, 'r') as stream:
                 try:
                     rd_tmp = json.dumps(yaml.load(stream), sort_keys=True, indent=2)
-                    rd_tmp = rd_tmp.replace("MY_NAMESPACE", '"vacio"')
                     rd_tmp = rd_tmp.replace("MY_NAMESPACE", namespace)
                     rd_tmp = rd_tmp.replace("AMF_ADDR", amf)
                     rd_tmp = rd_tmp.replace("UPF_ADDR", upf)
                     rd_tmp = rd_tmp.replace("SMF_ADDR", smf)
                     rd_tmp = rd_tmp.replace("HSS_ADDR", hss)
                     rd_tmp = rd_tmp.replace("S1AP_ADDR", s1ap)
+                    rd_tmp = rd_tmp.replace("PCRF_ADDR", pcrf)
                     resource_definition = rd_tmp.replace("GTPU_ADDR", gtpu)
                     stream.close()
                 except yaml.YAMLError as exc:
                     resource_definition="{}"
                     print(exc)
-            name = "free5gc-" + "%s" % service_instance.id
+            name = "free5gc-" + file.split(".")[0]
             instance = KubernetesResourceInstance(name=name, owner=owner,
                                               resource_definition=resource_definition,
                                               no_sync=False)

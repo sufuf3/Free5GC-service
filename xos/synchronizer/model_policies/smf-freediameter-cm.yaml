@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freediameter-smf-config
+  namespace: MY_NAMESPACE
+data:
+  config.file: |-
+      Identity = "smf.localdomain";
+      Realm = "localdomain";
+      No_SCTP;
+      ListenOn = "SMF_ADDR";
+      TLS_Cred = "/usr/src/free5gc/install/etc/free5gc/freeDiameter/smf.cert.pem", "/usr/src/free5gc/install/etc/free5gc/freeDiameter/smf.key.pem";
+      TLS_CA = "/usr/src/free5gc/install/etc/free5gc/freeDiameter/cacert.pem";
+      LoadExtension = "dbg_msg_dumps.so" : "0x8888";
+      LoadExtension = "dict_rfc5777.so";
+      LoadExtension = "dict_mip6i.so";
+      LoadExtension = "dict_nasreq.so";
+      LoadExtension = "dict_nas_mipv6.so";
+      LoadExtension = "dict_dcca.so";
+      LoadExtension = "dict_dcca_3gpp.so";
+      ConnectPeer = "pcrf.localdomain" { ConnectTo = "PCRF_ADDR"; No_TLS; };

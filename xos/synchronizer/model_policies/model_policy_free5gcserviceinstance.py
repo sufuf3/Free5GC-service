@@ -36,7 +36,7 @@ class Free5GCServiceInstancePolicy(Policy):
         s1ap = service_instance.tenant_s1ap
         gtpu = service_instance.tenant_gtpu
         ## Configmaps
-        cm_files = ["free5gc-cm.yaml", "freediameter-cm.yaml", "nextepc-cm.yaml"]
+        cm_files = ["free5gc-cm.yaml", "amf-freediameter-cm.yaml", "smf-freediameter-cm.yaml", "hss-freediameter-cm.yaml", "pcrf-freediameter-cm.yaml", "hss-nextepc-cm.yaml", "pcrf-nextepc-cm.yaml"]
         for file in cm_files:
             input_file=os.path.join(os.path.abspath(os.path.dirname(os.path.realpath(__file__))), file)
             with open(input_file, 'r') as stream:

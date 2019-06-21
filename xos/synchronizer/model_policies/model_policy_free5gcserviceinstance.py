@@ -24,10 +24,10 @@ class Free5GCServiceInstancePolicy(Policy):
 
     def handle_update(self, service_instance):
         log.info("handle_update Free5GCServiceInstance", object=str(service_instance))
-        t = TrustDomain(name="f5gc-trust", owner=KubernetesService.objects.first())
+        namespace = service_instance.tenant_namespace
+        t = TrustDomain(name=namespace, owner=KubernetesService.objects.first())
         t.save()
         owner = KubernetesService.objects.first()
-        namespace = service_instance.tenant_namespace
         amf = service_instance.tenant_amf
         upf = service_instance.tenant_upf
         hss = service_instance.tenant_hss

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freediameter-hss-config
+  namespace: MY_NAMESPACE
+data:
+  config.file: |-
+      Identity = "hss.localdomain";
+      Realm = "localdomain";
+      No_SCTP;
+      ListenOn = "HSS_ADDR";
+      TLS_Cred = "/usr/src/free5gc/install/etc/free5gc/freeDiameter/hss.cert.pem", "/usr/src/free5gc/install/etc/free5gc/freeDiameter/hss.key.pem";
+      TLS_CA = "/usr/src/free5gc/install/etc/free5gc/freeDiameter/cacert.pem";
+      LoadExtension = "dbg_msg_dumps.so" : "0x8888";
+      LoadExtension = "dict_rfc5777.so";
+      LoadExtension = "dict_mip6i.so";
+      LoadExtension = "dict_nasreq.so";
+      LoadExtension = "dict_nas_mipv6.so";
+      LoadExtension = "dict_dcca.so";
+      LoadExtension = "dict_dcca_3gpp.so";
+      LoadExtension = "dict_s6a.so";
+      ConnectPeer = "amf.localdomain" { ConnectTo = "AMF_ADDR"; No_TLS; };

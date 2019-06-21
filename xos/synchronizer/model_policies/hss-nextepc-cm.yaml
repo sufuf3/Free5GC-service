@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hss-config
+  namespace: MY_NAMESPACE
+data:
+  config.file: |
+    db_uri: mongodb://mongo-external.MY_NAMESPACE.svc.cluster.local/free5gc
+    logger:
+      file: /usr/src/free5gc/install/var/log/free5gc/hss.log
+      trace:
+        app: 1
+        diameter: 1
+    parameter:
+    hss:
+      freeDiameter: hss.conf

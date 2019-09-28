@@ -44,7 +44,7 @@ mkdir ~/cord
 cd ~/cord && git clone https://gerrit.opencord.org/helm-charts
 cd ~/cord/helm-charts
 git checkout 495b62510a5fdd7909330c7b294e8ef88eaa7421
-helm dep update cos-core
+helm dep update xos-core
 helm install xos-core -n xos-core --version 2.3.8
 helm dep update xos-profiles/base-kubernetes
 helm install xos-profiles/base-kubernetes -n base-kubernetes --version 1.0.3

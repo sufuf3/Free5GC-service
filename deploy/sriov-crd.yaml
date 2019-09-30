@@ -8,6 +8,8 @@ metadata:
 spec:
   config: '{
   "type": "sriov",
+  "cniVersion": "0.3.1",
+  "deviceID": "0000:07:00.0",
   "master": "enp7s0f0",
   "name": "sriov-network",
   "ipam": {
